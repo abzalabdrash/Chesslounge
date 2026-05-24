@@ -1,28 +1,66 @@
 import { useFrame } from '@react-three/fiber'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useGameStore } from '../store/gameStore'
 import { TABLES } from './tables'
 import { MainCharacter, type CharState } from './MainCharacter'
 import { getMoveSpeed } from './playerControls'
+import { resolveMove } from './obstacles'
 
 const TABLE_PROXIMITY = 2.2
-const ROOM_LIMIT_X = 10.5
-const ROOM_LIMIT_Z_MIN = -8.4
-const ROOM_LIMIT_Z_MAX = 8.4
+// Room limits hug the walls so the player can reach them but can't pass through.
+const ROOM_LIMIT_X = 11.4
+const ROOM_LIMIT_Z_MIN = -9.4
+const ROOM_LIMIT_Z_MAX = 8.2
 const MOVING_EPS = 0.005
+
+// Player seat across the table from the NPC. NPC sits at -sitDistance on local
+// z-axis; player mirrors to +sitDistance. Tuned a bit larger so knees don't clip
+// the table-leg bracket on the player side.
+const PLAYER_SEAT_DISTANCE = 1.45
+const PLAYER_SEAT_Y_OFFSET = 0.0 // override here if Meshy sit pose floats
 
 export function Player() {
   const ref = useRef<THREE.Group>(null!)
   const [charState, setCharState] = useState<CharState>('idle')
   const lastState = useRef<CharState>('idle')
 
+  // Teleport to the player-side seat the moment we enter a match.
+  const scene = useGameStore((s) => s.scene)
+  const currentOpponent = useGameStore((s) => s.currentOpponent)
+  useEffect(() => {
+    if (!ref.current) return
+    if ((scene === 'tableFocus' || scene === 'match') && currentOpponent) {
+      const table = TABLES.find((t) => t.id === currentOpponent)
+      if (!table) return
+      ref.current.position.set(
+        table.position[0],
+        PLAYER_SEAT_Y_OFFSET,
+        table.position[2] + PLAYER_SEAT_DISTANCE,
+      )
+      // face the table (NPC is on the opposite side at -sitDistance)
+      ref.current.rotation.y = Math.PI
+      setCharState('sit')
+      lastState.current = 'sit'
+    } else if (scene === 'world') {
+      // returning to world: spawn just outside the last table so we can see the player
+      setCharState('idle')
+      lastState.current = 'idle'
+    }
+  }, [scene, currentOpponent])
+
   useFrame((_, dt) => {
     if (!ref.current) return
     const pos = ref.current.position
-    const { scene, targetPos, nearTable, moveInput, sprinting } = useGameStore.getState()
+    const { scene, nearTable, moveInput, sprinting } = useGameStore.getState()
     const isWorldInteractive = scene === 'world'
     const hasMoveInput = isWorldInteractive && (moveInput[0] !== 0 || moveInput[1] !== 0)
+
+    // Lock movement & animation while seated.
+    if (!isWorldInteractive) {
+      useGameStore.getState().setPlayerPos([pos.x, pos.z])
+      return
+    }
 
     let stepLen = 0
 
@@ -30,27 +68,14 @@ export function Player() {
       const speed = getMoveSpeed(sprinting)
       const dx = moveInput[0] * speed * dt
       const dz = moveInput[1] * speed * dt
-      pos.x = THREE.MathUtils.clamp(pos.x + dx, -ROOM_LIMIT_X, ROOM_LIMIT_X)
-      pos.z = THREE.MathUtils.clamp(pos.z + dz, ROOM_LIMIT_Z_MIN, ROOM_LIMIT_Z_MAX)
+      const next = resolveMove(pos.x, pos.z, dx, dz)
+      const clampedX = THREE.MathUtils.clamp(next.x, -ROOM_LIMIT_X, ROOM_LIMIT_X)
+      const clampedZ = THREE.MathUtils.clamp(next.z, ROOM_LIMIT_Z_MIN, ROOM_LIMIT_Z_MAX)
+      stepLen = Math.hypot(clampedX - pos.x, clampedZ - pos.z)
+      pos.x = clampedX
+      pos.z = clampedZ
       const angle = Math.atan2(moveInput[0], moveInput[1])
       ref.current.rotation.y = angle
-      stepLen = Math.hypot(dx, dz)
-    } else if (isWorldInteractive && targetPos) {
-      const target = new THREE.Vector3(targetPos[0], pos.y, targetPos[1])
-      const direction = target.clone().sub(pos)
-      const distance = direction.length()
-      if (distance < 0.05) {
-        useGameStore.setState({ targetPos: null })
-      } else {
-        direction.normalize()
-        const step = Math.min(getMoveSpeed(false) * dt, distance)
-        pos.add(direction.multiplyScalar(step))
-        pos.x = THREE.MathUtils.clamp(pos.x, -ROOM_LIMIT_X, ROOM_LIMIT_X)
-        pos.z = THREE.MathUtils.clamp(pos.z, ROOM_LIMIT_Z_MIN, ROOM_LIMIT_Z_MAX)
-        const angle = Math.atan2(direction.x, direction.z)
-        ref.current.rotation.y = angle
-        stepLen = step
-      }
     }
 
     const nowMoving = stepLen > MOVING_EPS

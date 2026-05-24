@@ -65,6 +65,7 @@ function NpcFallback({ position = [0, 0, 0], tint }: NpcProps) {
 }
 
 // preload helper so models start fetching as soon as the module is imported
+// eslint-disable-next-line react-refresh/only-export-components
 export function preloadNpcs(urls: string[]) {
   for (const u of urls) {
     useGLTF.preload(u)

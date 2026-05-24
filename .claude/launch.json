@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "chesslounge-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5181"],
+      "port": 5181,
+      "cwd": "C:\\Users\\abdra\\Projects\\nfactgame\\chesslounge"
+    }
+  ]
+}

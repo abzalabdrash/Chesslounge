@@ -13,14 +13,20 @@ export interface MoveIntentKeys {
 }
 
 export const CAMERA_FORWARD = { x: 0, z: -1 }
-export const WALK_SPEED = 4.8
-export const SPRINT_SPEED = 7.2
+export const WALK_SPEED = 2.8
+export const SPRINT_SPEED = 4.8
 
+// Latin + Cyrillic equivalents so RU keyboard layout works without switching.
+// ц→w, ф→a, ы→s, в→d
 const KEY_MAP: Record<string, keyof MoveIntentKeys> = {
   w: 'w',
   a: 'a',
   s: 's',
   d: 'd',
+  'ц': 'w',
+  'ф': 'a',
+  'ы': 's',
+  'в': 'd',
   arrowup: 'arrowUp',
   arrowleft: 'arrowLeft',
   arrowdown: 'arrowDown',

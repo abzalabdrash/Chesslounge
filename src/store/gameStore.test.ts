@@ -5,6 +5,8 @@ describe('game store match transition', () => {
   beforeEach(() => {
     useGameStore.setState({
       scene: 'world',
+      boardInteractionMode: 'world',
+      cameraMode: 'tilt',
       targetPos: [2, 3],
       moveInput: [0, 0],
       sprinting: false,
@@ -19,6 +21,7 @@ describe('game store match transition', () => {
 
     expect(useGameStore.getState()).toMatchObject({
       scene: 'tableFocus',
+      boardInteractionMode: 'locked',
       currentOpponent: 'maestro',
       targetPos: null,
     })
@@ -30,8 +33,21 @@ describe('game store match transition', () => {
 
     expect(useGameStore.getState()).toMatchObject({
       scene: 'match',
+      boardInteractionMode: 'locked',
       currentOpponent: 'tilt',
     })
+  })
+
+  it('defaults matches to tilt camera and lets the player switch to top view', () => {
+    useGameStore.getState().enterMatch('tilt')
+
+    expect(useGameStore.getState().cameraMode).toBe('tilt')
+
+    useGameStore.getState().setCameraMode('top')
+    expect(useGameStore.getState().cameraMode).toBe('top')
+
+    useGameStore.getState().exitMatch()
+    expect(useGameStore.getState().cameraMode).toBe('tilt')
   })
 
   it('manual movement cancels point-and-click pathing', () => {

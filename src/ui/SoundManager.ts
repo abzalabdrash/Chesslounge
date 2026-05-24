@@ -9,23 +9,31 @@ export type SfxName =
   | 'check'
   | 'checkmate'
   | 'game-start'
+  | 'select'
+  | 'notify'
   | 'ambient'
 
+// Lichess-standard pack — same crisp sounds chess.com/lichess use. Pleasant
+// short clicks for move, fuller thunk for capture. Replay arrows reuse `move`.
 const FILES: Record<SfxName, string> = {
-  move: '/sounds/move.mp3',
-  capture: '/sounds/capture.mp3',
-  check: '/sounds/check.mp3',
-  checkmate: '/sounds/checkmate.mp3',
-  'game-start': '/sounds/game-start.mp3',
+  move: '/sounds/lichess/Move.mp3',
+  capture: '/sounds/lichess/Capture.mp3',
+  check: '/sounds/lichess/GenericNotify.mp3',
+  checkmate: '/sounds/lichess/GenericNotify.mp3',
+  'game-start': '/sounds/lichess/GenericNotify.mp3',
+  select: '/sounds/lichess/Select.mp3',
+  notify: '/sounds/lichess/GenericNotify.mp3',
   ambient: '/sounds/ambient.mp3',
 }
 
 const VOLUMES: Record<SfxName, number> = {
-  move: 0.55,
-  capture: 0.7,
-  check: 0.65,
-  checkmate: 0.8,
-  'game-start': 0.6,
+  move: 0.7,
+  capture: 0.85,
+  check: 0.75,
+  checkmate: 0.9,
+  'game-start': 0.7,
+  select: 0.5,
+  notify: 0.6,
   ambient: 0.18,
 }
 

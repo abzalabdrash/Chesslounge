@@ -21,8 +21,8 @@ describe('player controls', () => {
   })
 
   it('applies the shift speed multiplier', () => {
-    expect(getMoveSpeed(false)).toBe(4.8)
-    expect(getMoveSpeed(true)).toBe(7.2)
+    expect(getMoveSpeed(false)).toBe(2.8)
+    expect(getMoveSpeed(true)).toBe(4.8)
   })
 
   it('normalizes joystick vectors and clamps oversized input', () => {

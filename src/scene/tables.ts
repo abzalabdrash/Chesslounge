@@ -8,6 +8,19 @@ export interface TableConfig {
   skinColor: string
   model: string
   accent: string
+  /** Seated NPC GLB with built-in sit animation (Meshy). Optional — falls back to `model`. */
+  sitModel?: string
+  /** Per-model tweaks for the seated rig: scale + y-offset so butt lands on stool. */
+  sitScale?: number
+  sitYOffset?: number
+  /** Yaw (radians). Each Meshy model has its own base forward direction. */
+  sitRotationY?: number
+  /** Distance from table center along -Z (where the stool is). Larger = further away. */
+  sitDistance?: number
+  /** Optional lateral shift along X — some Meshy sit poses lean to one side. */
+  sitOffsetX?: number
+  /** Stool seat-top Y. Higher chair for poses where Meshy puts hips high. */
+  sitStoolHeight?: number
 }
 
 export const TABLES: TableConfig[] = [
@@ -20,6 +33,17 @@ export const TABLES: TableConfig[] = [
     color: '#dc2626',
     skinColor: '#a16207',
     model: '/models/kenney/character-male-a.glb',
+    sitModel: '/models/blackjacket/Meshy_AI_Animation_Chair_Sit_Idle_M_withSkin.glb',
+    sitScale: 0.95,
+    // Meshy "Chair Sit Idle M" model has hips ~0.45m above its local origin.
+    // This particular rig sits significantly lower + leans forward, so we lift
+    // him a real notch up and push him further back so the torso stops
+    // overhanging the table edge and the legs clear the stool top.
+    sitYOffset: 0.18,
+    sitRotationY: 0,
+    sitDistance: 1.6,
+    sitOffsetX: 0,
+    sitStoolHeight: 0.46,
     accent: '#ef4444',
   },
   {
@@ -31,6 +55,13 @@ export const TABLES: TableConfig[] = [
     color: '#1e40af',
     skinColor: '#fde68a',
     model: '/models/kenney/character-male-b.glb',
+    sitModel: '/models/ata/Meshy_AI_Meshy_Merged_Animations.glb',
+    sitScale: 0.95,
+    sitYOffset: 0,
+    sitRotationY: 0,
+    sitDistance: 1.3,
+    sitOffsetX: 0,
+    sitStoolHeight: 0.46,
     accent: '#60a5fa',
   },
   {
@@ -42,6 +73,12 @@ export const TABLES: TableConfig[] = [
     color: '#db2777',
     skinColor: '#fed7aa',
     model: '/models/kenney/character-female-a.glb',
+    sitModel: '/models/girl/Meshy_AI_Animation_Sit_Cross_Legged_withSkin.glb',
+    sitScale: 0.9,
+    sitYOffset: 0.0,
+    sitRotationY: 0,
+    sitDistance: 1.35,
+    sitStoolHeight: 0.21, // cross-legged sits low — small stool
     accent: '#f472b6',
   },
 ]

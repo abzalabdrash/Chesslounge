@@ -5,8 +5,12 @@ import * as THREE from 'three'
 
 const IDLE_URL = '/models/maincharacter/Meshy_AI_Animation_Idle_3_withSkin.glb'
 const WALK_URL = '/models/maincharacter/Meshy_AI_Animation_walking_2_withSkin.glb'
+const RUN_URL = '/models/maincharacter/Meshy_AI_Animation_run_fast_3_inplace_withSkin.glb'
+// Meshy clip plays "sit → stand". Play it in reverse and clamp on the final
+// frame to leave the character in a stable seated pose.
+const SIT_URL = '/models/maincharacter/Meshy_AI_Animation_Sit_to_Stand_Transition_F_withSkin.glb'
 
-export type CharState = 'idle' | 'walk' | 'run'
+export type CharState = 'idle' | 'walk' | 'run' | 'sit'
 
 // Meshy walk clips usually translate the root bone forward (root motion).
 // We drive position in code, so strip the root position tracks to play "in place".
@@ -24,6 +28,8 @@ interface MainCharacterProps {
 export function MainCharacter({ state, scale = 1 }: MainCharacterProps) {
   const idleGltf = useGLTF(IDLE_URL)
   const walkGltf = useGLTF(WALK_URL)
+  const runGltf = useGLTF(RUN_URL)
+  const sitGltf = useGLTF(SIT_URL)
   const groupRef = useRef<THREE.Group>(null!)
 
   // Independent skeleton clone so multiple instances don't share bones.
@@ -53,8 +59,19 @@ export function MainCharacter({ state, scale = 1 }: MainCharacterProps) {
       cl.name = 'walk'
       return cl
     })
-    return [...idle, ...walk]
-  }, [idleGltf.animations, walkGltf.animations])
+    const run = runGltf.animations.map((c) => {
+      // run GLB is already exported "in_place" by Meshy, but strip just in case
+      const cl = stripRootMotion(c)
+      cl.name = 'run'
+      return cl
+    })
+    const sit = sitGltf.animations.map((c) => {
+      const cl = stripRootMotion(c)
+      cl.name = 'sit'
+      return cl
+    })
+    return [...idle, ...walk, ...run, ...sit]
+  }, [idleGltf.animations, walkGltf.animations, runGltf.animations, sitGltf.animations])
 
   const { actions, mixer } = useAnimations(clips, groupRef)
   const currentRef = useRef<THREE.AnimationAction | null>(null)
@@ -70,25 +87,45 @@ export function MainCharacter({ state, scale = 1 }: MainCharacterProps) {
   useEffect(() => {
     const idleAction = actions.idle
     const walkAction = actions.walk
+    const runAction = actions.run
+    const sitAction = actions.sit
     if (!idleAction || !walkAction) return
 
-    const next = state === 'idle' ? idleAction : walkAction
-    // run = walk played faster
-    walkAction.timeScale = state === 'run' ? 1.65 : 1.0
+    const next =
+      state === 'sit'
+        ? (sitAction ?? idleAction)
+        : state === 'idle'
+        ? idleAction
+        : state === 'run'
+        ? (runAction ?? walkAction)
+        : walkAction
 
-    // Already on this action: ensure it's playing, don't re-fade.
+    // Already on this action: ensure it's playing, don't re-fade or re-configure.
     if (currentRef.current === next) {
       if (!next.isRunning()) next.play()
       return
     }
 
-    next.reset()
-    next.setLoop(THREE.LoopRepeat, Infinity)
-    next.enabled = true
-    next.paused = false
-
+    // Fade out the previous action (don't touch its config — leave for its
+    // own next selection so we don't accidentally squash sit-specific state).
     if (currentRef.current) {
       currentRef.current.fadeOut(0.18)
+    }
+
+    // Configure & play the new action.
+    next.reset()
+    next.enabled = true
+    next.paused = false
+    if (sitAction && next === sitAction) {
+      // Meshy clip plays "sit → stand". Reverse it and clamp on the seated frame.
+      next.setLoop(THREE.LoopOnce, 1)
+      next.clampWhenFinished = true
+      next.timeScale = -1
+      next.time = next.getClip().duration
+    } else {
+      next.setLoop(THREE.LoopRepeat, Infinity)
+      next.clampWhenFinished = false
+      next.timeScale = 1.0
     }
     next.fadeIn(0.18).play()
     currentRef.current = next
@@ -110,3 +147,5 @@ export function MainCharacter({ state, scale = 1 }: MainCharacterProps) {
 
 useGLTF.preload(IDLE_URL)
 useGLTF.preload(WALK_URL)
+useGLTF.preload(RUN_URL)
+useGLTF.preload(SIT_URL)
