@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useGameStore } from '../store/gameStore'
 import { TABLES } from './tables'
-import { MainCharacter } from './MainCharacter'
+import { MainCharacter, type CharState } from './MainCharacter'
 import { getMoveSpeed } from './playerControls'
 
 const TABLE_PROXIMITY = 2.2
@@ -14,8 +14,8 @@ const MOVING_EPS = 0.005
 
 export function Player() {
   const ref = useRef<THREE.Group>(null!)
-  const [moving, setMoving] = useState(false)
-  const lastMoving = useRef(false)
+  const [charState, setCharState] = useState<CharState>('idle')
+  const lastState = useRef<CharState>('idle')
 
   useFrame((_, dt) => {
     if (!ref.current) return
@@ -54,9 +54,10 @@ export function Player() {
     }
 
     const nowMoving = stepLen > MOVING_EPS
-    if (nowMoving !== lastMoving.current) {
-      lastMoving.current = nowMoving
-      setMoving(nowMoving)
+    const nextState: CharState = !nowMoving ? 'idle' : sprinting ? 'run' : 'walk'
+    if (nextState !== lastState.current) {
+      lastState.current = nextState
+      setCharState(nextState)
     }
 
     useGameStore.getState().setPlayerPos([pos.x, pos.z])
@@ -79,7 +80,7 @@ export function Player() {
 
   return (
     <group ref={ref} position={[0, 0, 5]}>
-      <MainCharacter moving={moving} scale={1.0} />
+      <MainCharacter state={charState} scale={1.0} />
       {/* warm aura under feet to make the player visible against dark floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
         <ringGeometry args={[0.3, 0.42, 24]} />

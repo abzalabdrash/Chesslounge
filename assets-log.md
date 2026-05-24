@@ -25,6 +25,9 @@ Hackathon asset drop for chess lounge placeholders. Files were added only under 
 - Wikimedia Commons "Chessboard480.svg": https://commons.wikimedia.org/wiki/File:Chessboard480.svg
   - Downloaded file: https://commons.wikimedia.org/wiki/Special:Redirect/file/Chessboard480.svg
   - License: Creative Commons CC0 1.0 Universal Public Domain Dedication
+- User-provided Meshy AI player character exports
+  - Dropped into `public/models/maincharacter/`
+  - License: user-provided for this hackathon project
 
 ## Processing Notes
 
@@ -36,6 +39,7 @@ Hackathon asset drop for chess lounge placeholders. Files were added only under 
 - `ambient.mp3` was looped from OpenGameArt `Relaxing.mp3` to 30.0s, attenuated to quiet playback, and faded in/out.
 - Character models were extracted from Kenney `Models/GLB format/` without modification.
 - `wikimedia-chessboard480.svg` is used as a subtle board-frame texture/reference layer behind the CSS-skinned interactive board.
+- Meshy player GLBs were integrated as provided. Walk root-position tracks are stripped at runtime so code-driven movement stays in place.
 
 ## Verification
 
@@ -58,3 +62,6 @@ Hackathon asset drop for chess lounge placeholders. Files were added only under 
 | `public/models/kenney/character-male-a.glb` | 246,916 B | n/a | https://opengameart.org/content/mini-character-1 | CC0 |
 | `public/models/kenney/character-male-b.glb` | 247,332 B | n/a | https://opengameart.org/content/mini-character-1 | CC0 |
 | `public/boards/wikimedia-chessboard480.svg` | 230 B | n/a | https://commons.wikimedia.org/wiki/File:Chessboard480.svg | CC0 1.0 |
+| `public/models/maincharacter/Meshy_AI_Animation_Idle_3_withSkin.glb` | 7,118,500 B | n/a | User-provided Meshy export | User-provided |
+| `public/models/maincharacter/Meshy_AI_Animation_Sit_to_Stand_Transition_F_withSkin.glb` | 7,065,296 B | n/a | User-provided Meshy export | User-provided |
+| `public/models/maincharacter/Meshy_AI_Animation_walking_2_withSkin.glb` | 7,021,704 B | n/a | User-provided Meshy export | User-provided |
