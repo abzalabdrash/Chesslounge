@@ -36,17 +36,16 @@ export const TABLES: TableConfig[] = [
     skinColor: '#a16207',
     model: '/models/kenney/character-male-a.glb',
     iconUrl: '/models/blackjacket/blackicon.png',
-    sitModel: '/models/blackjacket/Meshy_AI_Animation_Chair_Sit_Idle_M_withSkin.glb',
-    sitScale: 0.95,
-    // Meshy "Chair Sit Idle M" model has hips ~0.45m above its local origin.
-    // This particular rig sits significantly lower + leans forward, so we lift
-    // him a real notch up and push him further back so the torso stops
-    // overhanging the table edge and the legs clear the stool top.
-    sitYOffset: 0.18,
+    // Hustler now uses a Meshy "Sit Cross Legged" rig (the user swapped this
+    // model in so it matches the other personas' seated style). Settings are
+    // copied from the Tilt persona which uses the same animation source.
+    sitModel: '/models/blackjacket/Meshy_AI_Animation_Sit_Cross_Legged_withSkin.glb',
+    sitScale: 0.9,
+    sitYOffset: 0.0,
     sitRotationY: 0,
-    sitDistance: 1.6,
+    sitDistance: 1.35,
     sitOffsetX: 0,
-    sitStoolHeight: 0.46,
+    sitStoolHeight: 0.21,
     accent: '#ef4444',
   },
   {
