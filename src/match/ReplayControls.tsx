@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { getReplayStatusLabel } from './chessUx'
 
 interface Props {
   viewPly: number | null
@@ -24,6 +25,7 @@ export function ReplayControls({
   const displayPly = viewPly ?? totalPlies
   const atStart = displayPly === 0
   const atEnd = isLive
+  const status = getReplayStatusLabel(viewPly, totalPlies)
 
   const repeatRef = useRef<{
     timeout: ReturnType<typeof setTimeout> | null
@@ -88,23 +90,23 @@ export function ReplayControls({
   }, [onStepBack, onStepForward, onJumpStart, onJumpLive])
 
   return (
-    <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg p-2 flex flex-col gap-2">
+    <div className="bg-neutral-950/62 backdrop-blur-md border border-white/10 rounded-lg p-2 flex flex-col gap-2 shadow-lg shadow-black/30">
       <div className="flex items-center justify-between px-1 text-xs">
         <span
           className={
-            isLive
-              ? 'text-emerald-400/90'
+            status.tone === 'live'
+              ? 'text-cyan-200/90'
               : 'text-amber-300/90'
           }
         >
-          {isLive ? '● Live' : `Ply ${displayPly} / ${totalPlies}`}
+          {status.text}
         </span>
         {!isLive && (
           <button
             onClick={onJumpLive}
             className="text-amber-400 hover:text-amber-300 text-[10px] uppercase tracking-widest"
           >
-            Return to live
+            Back to board
           </button>
         )}
       </div>
@@ -126,7 +128,7 @@ export function ReplayControls({
           label="▶"
           title="Forward (→)"
         />
-        <ReplayBtn onClick={onJumpLive} disabled={atEnd} label="⏭" title="Jump to live (↓)" />
+        <ReplayBtn onClick={onJumpLive} disabled={atEnd} label="⏭" title="Jump to board (Down)" />
       </div>
     </div>
   )

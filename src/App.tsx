@@ -54,7 +54,7 @@ export default function App() {
           Chess Lounge
         </h1>
         <p className="text-amber-100/60 text-xs uppercase tracking-[0.3em]">
-          AI opponents · with personality
+          Personality opponents · cozy tactics
         </p>
       </div>
 

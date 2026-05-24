@@ -31,8 +31,8 @@ export function MoveList({ history, viewPly, onPick }: Props) {
   const effectivePly = viewPly ?? livePly
 
   return (
-    <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg flex flex-col min-h-0 h-44">
-      <div className="px-3 py-1.5 border-b border-neutral-800 text-amber-400/70 text-[10px] uppercase tracking-widest font-mono">
+    <div className="bg-neutral-950/62 backdrop-blur-md border border-white/10 rounded-lg flex flex-col min-h-0 h-44 shadow-lg shadow-black/30">
+      <div className="px-3 py-1.5 border-b border-white/10 text-amber-400/70 text-[10px] uppercase tracking-widest font-mono">
         Moves
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto py-1">
@@ -84,8 +84,8 @@ function Cell({ move, ply, active, onPick }: CellProps) {
       onClick={() => onPick(ply)}
       className={`rounded px-1.5 py-0.5 text-left transition-colors ${
         active
-          ? 'bg-amber-500/20 text-amber-200 ring-1 ring-amber-400/40'
-          : 'text-neutral-200 hover:bg-neutral-800/80'
+          ? 'bg-amber-500/20 text-amber-100 ring-1 ring-amber-300/40'
+          : 'text-neutral-200 hover:bg-cyan-500/10'
       }`}
     >
       {move.san}

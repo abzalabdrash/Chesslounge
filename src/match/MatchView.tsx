@@ -54,9 +54,9 @@ export function MatchView() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="absolute inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+      className="absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(245,158,11,0.12),rgba(0,0,0,0.58)_46%,rgba(0,0,0,0.74))] backdrop-blur-[2px] flex items-center justify-center p-4 overflow-y-auto"
     >
-      <div className="bg-neutral-900/95 border border-amber-500/20 rounded-xl p-6 md:p-8 w-full max-w-5xl shadow-2xl my-auto">
+      <div className="bg-neutral-950/78 backdrop-blur-md border border-amber-300/20 rounded-xl p-5 md:p-7 w-full max-w-6xl shadow-2xl my-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <PersonaAvatar persona={opponent} size={64} />

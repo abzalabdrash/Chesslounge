@@ -22,6 +22,9 @@ Hackathon asset drop for chess lounge placeholders. Files were added only under 
 - OpenGameArt "Mini Character 1" by Kenney: https://opengameart.org/content/mini-character-1
   - Downloaded pack: https://opengameart.org/sites/default/files/kenney_mini-characters.zip
   - License: CC0
+- Wikimedia Commons "Chessboard480.svg": https://commons.wikimedia.org/wiki/File:Chessboard480.svg
+  - Downloaded file: https://commons.wikimedia.org/wiki/Special:Redirect/file/Chessboard480.svg
+  - License: Creative Commons CC0 1.0 Universal Public Domain Dedication
 
 ## Processing Notes
 
@@ -32,6 +35,7 @@ Hackathon asset drop for chess lounge placeholders. Files were added only under 
 - `checkmate.mp3` was trimmed from OpenGameArt `Victory_0.mp3` to 1.10s with fade-out.
 - `ambient.mp3` was looped from OpenGameArt `Relaxing.mp3` to 30.0s, attenuated to quiet playback, and faded in/out.
 - Character models were extracted from Kenney `Models/GLB format/` without modification.
+- `wikimedia-chessboard480.svg` is used as a subtle board-frame texture/reference layer behind the CSS-skinned interactive board.
 
 ## Verification
 
@@ -53,3 +57,4 @@ Hackathon asset drop for chess lounge placeholders. Files were added only under 
 | `public/models/kenney/character-female-c.glb` | 252,040 B | n/a | https://opengameart.org/content/mini-character-1 | CC0 |
 | `public/models/kenney/character-male-a.glb` | 246,916 B | n/a | https://opengameart.org/content/mini-character-1 | CC0 |
 | `public/models/kenney/character-male-b.glb` | 247,332 B | n/a | https://opengameart.org/content/mini-character-1 | CC0 |
+| `public/boards/wikimedia-chessboard480.svg` | 230 B | n/a | https://commons.wikimedia.org/wiki/File:Chessboard480.svg | CC0 1.0 |
