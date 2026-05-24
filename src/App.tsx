@@ -6,6 +6,8 @@ import { useGameStore } from './store/gameStore'
 import { TABLES } from './scene/tables'
 import { PersonaAvatar } from './ui/PersonaAvatar'
 import { SoundManager, installAudioUnlock } from './ui/SoundManager'
+import { useKeyboardMovement } from './scene/playerControls'
+import { TouchJoystick } from './ui/TouchJoystick'
 
 export default function App() {
   const scene = useGameStore((s) => s.scene)
@@ -13,6 +15,7 @@ export default function App() {
   const enterMatch = useGameStore((s) => s.enterMatch)
   const exitMatch = useGameStore((s) => s.exitMatch)
   const [muted, setMuted] = useState(false)
+  useKeyboardMovement()
 
   useEffect(() => {
     installAudioUnlock()
@@ -26,7 +29,7 @@ export default function App() {
       if (scene === 'world' && key === 'e' && nearTable) {
         enterMatch(nearTable)
       }
-      if (scene === 'match' && e.key === 'Escape') {
+      if ((scene === 'match' || scene === 'tableFocus') && e.key === 'Escape') {
         exitMatch()
       }
       if (key === 'm') {
@@ -58,8 +61,9 @@ export default function App() {
         </p>
       </div>
 
-      <div className="pointer-events-none absolute top-4 left-4 text-xs text-white/60 font-mono leading-relaxed bg-black/40 backdrop-blur-sm px-3 py-2 rounded-md">
-        <div>Click floor — walk</div>
+      <div className="pointer-events-none absolute top-4 left-4 text-xs text-white/70 font-mono leading-relaxed bg-black/35 backdrop-blur-sm px-3 py-2 rounded-md">
+        <div>WASD / click — walk</div>
+        <div>Shift — move faster</div>
         <div>E — sit at table</div>
         <div>Esc — leave table</div>
         <div>M — {muted ? 'unmute' : 'mute'} audio</div>
@@ -92,6 +96,7 @@ export default function App() {
       <AnimatePresence>
         {scene === 'match' && <MatchView key="match" />}
       </AnimatePresence>
+      <TouchJoystick />
     </div>
   )
 }
