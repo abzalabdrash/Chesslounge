@@ -42,6 +42,34 @@ const STYLES: Record<string, AvatarStyle> = {
 
 export function PersonaAvatar({ persona, size = 64 }: Props) {
   const style = STYLES[persona.id] ?? STYLES.hustler
+
+  // If the persona ships a real avatar PNG, render it as the primary face
+  // (cleaner than the generated initial/emoji combo). The colored ring + glow
+  // are kept so the avatar still feels themed and pops against dark backdrops.
+  if (persona.iconUrl) {
+    return (
+      <div
+        className="relative inline-flex items-center justify-center rounded-full shrink-0 overflow-hidden"
+        style={{
+          width: size,
+          height: size,
+          background: `linear-gradient(135deg, ${style.gradient[0]}, ${style.gradient[1]})`,
+          border: `2px solid ${style.ring}`,
+          boxShadow: `0 0 20px ${style.gradient[0]}55, inset 0 -8px 16px rgba(0,0,0,0.3)`,
+        }}
+      >
+        <img
+          src={persona.iconUrl}
+          alt={persona.label}
+          width={size}
+          height={size}
+          className="h-full w-full object-cover"
+          draggable={false}
+        />
+      </div>
+    )
+  }
+
   return (
     <div
       className="relative inline-flex items-center justify-center rounded-full font-display font-bold shadow-2xl shrink-0"
