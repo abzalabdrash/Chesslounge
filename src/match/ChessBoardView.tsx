@@ -4,6 +4,7 @@ import { Chessboard } from 'react-chessboard'
 import { createEngine, difficultyForElo, type Engine } from './engine'
 import type { TableConfig } from '../scene/tables'
 import { Commentator, type MoveTrigger } from '../llm/commentator'
+import { SoundManager } from '../ui/SoundManager'
 
 interface Props {
   opponent: TableConfig
@@ -29,6 +30,25 @@ function triggerForMove(move: Move, side: 'player' | 'ai'): MoveTrigger {
   return 'ai-move'
 }
 
+function playMoveSound(move: Move) {
+  const isMate = move.san.includes('#')
+  const isCheck = move.san.includes('+')
+  const isCapture = !!move.captured
+  if (isMate) {
+    SoundManager.play('checkmate')
+    return
+  }
+  if (isCheck) {
+    SoundManager.play('check')
+    return
+  }
+  if (isCapture) {
+    SoundManager.play('capture')
+    return
+  }
+  SoundManager.play('move')
+}
+
 export function ChessBoardView({ opponent, onResult }: Props) {
   const chessRef = useRef(new Chess())
   const engineRef = useRef<Engine | null>(null)
@@ -45,6 +65,9 @@ export function ChessBoardView({ opponent, onResult }: Props) {
     engineRef.current = engine
     const commentator = new Commentator()
     commentatorRef.current = commentator
+
+    SoundManager.preload()
+    SoundManager.play('game-start')
 
     // Opening line on mount
     triggerCommentary({
@@ -149,6 +172,7 @@ export function ChessBoardView({ opponent, onResult }: Props) {
           }
           setFen(chessRef.current.fen())
           setThinking(false)
+          playMoveSound(result)
           if (!checkGameOver()) {
             setStatus('Your move')
             triggerCommentary(buildCtx(result, triggerForMove(result, 'ai')))
@@ -172,6 +196,7 @@ export function ChessBoardView({ opponent, onResult }: Props) {
       })
       if (!move) return false
       setFen(chessRef.current.fen())
+      playMoveSound(move)
       triggerCommentary(buildCtx(move, triggerForMove(move, 'player')))
       if (!checkGameOver()) {
         setTimeout(triggerAIMove, 700)
