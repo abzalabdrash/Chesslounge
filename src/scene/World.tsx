@@ -2,7 +2,10 @@ import { Canvas } from '@react-three/fiber'
 import { Floor } from './Floor'
 import { Player } from './Player'
 import { Table } from './Table'
-import { TABLES } from './tables'
+import { TABLES, PLAYER_MODEL } from './tables'
+import { preloadNpcs } from './Npc'
+
+preloadNpcs([...TABLES.map((t) => t.model), PLAYER_MODEL])
 
 const WALL_COLOR = '#1a1320'
 const WALL_TRIM = '#2a1d33'

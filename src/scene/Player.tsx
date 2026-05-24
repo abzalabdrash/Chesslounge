@@ -2,7 +2,8 @@ import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import * as THREE from 'three'
 import { useGameStore } from '../store/gameStore'
-import { TABLES } from './tables'
+import { TABLES, PLAYER_MODEL } from './tables'
+import { Npc } from './Npc'
 
 const SPEED = 6
 const TABLE_PROXIMITY = 2.2
@@ -47,18 +48,12 @@ export function Player() {
   })
 
   return (
-    <group ref={ref} position={[0, 0.6, 5]}>
-      <mesh castShadow>
-        <boxGeometry args={[0.5, 1.2, 0.4]} />
-        <meshStandardMaterial color="#fbbf24" />
-      </mesh>
-      <mesh castShadow position={[0, 0.85, 0]}>
-        <sphereGeometry args={[0.25, 16, 16]} />
-        <meshStandardMaterial color="#fde68a" />
-      </mesh>
-      <mesh position={[0, 0, 0.27]}>
-        <boxGeometry args={[0.1, 0.05, 0.05]} />
-        <meshStandardMaterial color="#000" />
+    <group ref={ref} position={[0, 0, 5]}>
+      <Npc url={PLAYER_MODEL} scale={1.0} rotationY={0} tint="#fbbf24" />
+      {/* warm aura under feet to make the player visible against dark floor */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <ringGeometry args={[0.3, 0.42, 24]} />
+        <meshBasicMaterial color="#fbbf24" transparent opacity={0.35} />
       </mesh>
     </group>
   )

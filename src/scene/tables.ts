@@ -6,6 +6,8 @@ export interface TableConfig {
   position: [number, number, number]
   color: string
   skinColor: string
+  model: string
+  accent: string
 }
 
 export const TABLES: TableConfig[] = [
@@ -17,6 +19,8 @@ export const TABLES: TableConfig[] = [
     position: [-6, 0, -2],
     color: '#dc2626',
     skinColor: '#a16207',
+    model: '/models/kenney/character-male-a.glb',
+    accent: '#ef4444',
   },
   {
     id: 'maestro',
@@ -26,6 +30,8 @@ export const TABLES: TableConfig[] = [
     position: [0, 0, -4],
     color: '#1e40af',
     skinColor: '#fde68a',
+    model: '/models/kenney/character-male-b.glb',
+    accent: '#60a5fa',
   },
   {
     id: 'tilt',
@@ -35,5 +41,9 @@ export const TABLES: TableConfig[] = [
     position: [6, 0, -2],
     color: '#db2777',
     skinColor: '#fed7aa',
+    model: '/models/kenney/character-female-a.glb',
+    accent: '#f472b6',
   },
 ]
+
+export const PLAYER_MODEL = '/models/kenney/character-female-c.glb'

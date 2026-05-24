@@ -1,6 +1,7 @@
 import { Text } from '@react-three/drei'
 import { useGameStore } from '../store/gameStore'
 import type { TableConfig } from './tables'
+import { Npc } from './Npc'
 
 const LEG_OFFSETS: [number, number][] = [
   [-0.6, -0.6],
@@ -39,17 +40,20 @@ export function Table({ config }: { config: TableConfig }) {
         <meshBasicMaterial color="#000" wireframe opacity={0.15} transparent />
       </mesh>
 
-      {/* opponent NPC sitting behind */}
-      <group position={[0, 0, -1.1]}>
-        <mesh castShadow position={[0, 0.6, 0]}>
-          <boxGeometry args={[0.5, 1.2, 0.4]} />
-          <meshStandardMaterial color={config.color} />
-        </mesh>
-        <mesh castShadow position={[0, 1.45, 0]}>
-          <sphereGeometry args={[0.25, 16, 16]} />
-          <meshStandardMaterial color={config.skinColor} />
-        </mesh>
-      </group>
+      {/* opponent NPC sitting behind, facing the player */}
+      <Npc
+        url={config.model}
+        position={[0, 0, -1.1]}
+        rotationY={Math.PI}
+        scale={0.95}
+        tint={config.accent}
+      />
+
+      {/* simple stool under the NPC */}
+      <mesh position={[0, 0.18, -1.1]} castShadow>
+        <cylinderGeometry args={[0.28, 0.32, 0.36, 16]} />
+        <meshStandardMaterial color="#2a1810" />
+      </mesh>
 
       {/* floating label */}
       <Text
