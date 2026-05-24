@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { TABLES } from '../scene/tables'
 import { ChessBoardView } from './ChessBoardView'
+import { PersonaAvatar } from '../ui/PersonaAvatar'
 
 interface MatchResult {
   outcome: 'win' | 'loss' | 'draw' | 'aborted'
@@ -28,13 +29,17 @@ export function MatchView() {
     >
       <div className="bg-neutral-900/95 border border-amber-500/20 rounded-xl p-6 md:p-8 w-full max-w-5xl shadow-2xl my-auto">
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="text-amber-400/60 text-xs uppercase tracking-widest mb-0.5">
-              Sitting at the table of
-            </p>
-            <h2 className="text-3xl font-display font-bold text-amber-300">
-              {opponent.label}
-            </h2>
+          <div className="flex items-center gap-4">
+            <PersonaAvatar persona={opponent} size={64} />
+            <div>
+              <p className="text-amber-400/60 text-xs uppercase tracking-widest mb-0.5">
+                Sitting at the table of
+              </p>
+              <h2 className="text-3xl font-display font-bold text-amber-300 leading-tight">
+                {opponent.label}
+              </h2>
+              <p className="text-neutral-500 text-xs italic">{opponent.bio}</p>
+            </div>
           </div>
           <button
             onClick={exitMatch}

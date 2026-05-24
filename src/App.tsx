@@ -4,6 +4,7 @@ import { World } from './scene/World'
 import { MatchView } from './match/MatchView'
 import { useGameStore } from './store/gameStore'
 import { TABLES } from './scene/tables'
+import { PersonaAvatar } from './ui/PersonaAvatar'
 
 export default function App() {
   const scene = useGameStore((s) => s.scene)
@@ -25,7 +26,7 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [scene, nearTable, enterMatch, exitMatch])
 
-  const nearLabel = TABLES.find((t) => t.id === nearTable)?.label
+  const nearPersona = TABLES.find((t) => t.id === nearTable)
 
   return (
     <div className="h-screen w-screen relative overflow-hidden bg-neutral-950 text-neutral-100">
@@ -47,9 +48,13 @@ export default function App() {
         <div>⌨ Esc — leave table</div>
       </div>
 
-      {scene === 'world' && nearTable && (
-        <div className="pointer-events-none absolute bottom-12 left-1/2 -translate-x-1/2 px-6 py-3 bg-amber-400 text-black rounded-full font-bold shadow-2xl animate-pulse">
-          Press [E] to play <span className="font-display">{nearLabel}</span>
+      {scene === 'world' && nearPersona && (
+        <div className="pointer-events-none absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-3 px-5 py-3 bg-amber-400/95 text-black rounded-full font-bold shadow-2xl animate-pulse">
+          <PersonaAvatar persona={nearPersona} size={42} />
+          <span>
+            Press <kbd className="bg-black text-amber-300 px-1.5 py-0.5 rounded text-xs">E</kbd>{' '}
+            to play <span className="font-display">{nearPersona.label}</span>
+          </span>
         </div>
       )}
 
