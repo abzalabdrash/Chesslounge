@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../store/gameStore'
 import { TABLES } from '../scene/tables'
 import { ChessBoardView } from './ChessBoardView'
 import { PersonaAvatar } from '../ui/PersonaAvatar'
+import { getPersona } from '../llm/personas'
 
 interface MatchResult {
   outcome: 'win' | 'loss' | 'draw' | 'aborted'
@@ -17,7 +18,35 @@ export function MatchView() {
   const [matchKey, setMatchKey] = useState(0)
   const [result, setResult] = useState<MatchResult | null>(null)
 
+  const reaction = useMemo(() => {
+    if (!opponent || !result) return ''
+    const persona = getPersona(opponent.id)
+    const pool =
+      result.outcome === 'win'
+        ? persona.fallbacks.playerWins
+        : result.outcome === 'loss'
+        ? persona.fallbacks.aiWins
+        : persona.fallbacks.draw
+    return pool[Math.floor(Math.random() * pool.length)] ?? ''
+  }, [opponent, result])
+
   if (!opponent) return null
+
+  const verdict =
+    result?.outcome === 'win'
+      ? 'Checkmate — you won'
+      : result?.outcome === 'loss'
+      ? `${opponent.label} wins`
+      : result?.outcome === 'draw'
+      ? 'Draw'
+      : 'Match aborted'
+
+  const verdictAccent =
+    result?.outcome === 'win'
+      ? 'text-emerald-300'
+      : result?.outcome === 'loss'
+      ? 'text-rose-300'
+      : 'text-amber-300'
 
   return (
     <motion.div
@@ -55,39 +84,71 @@ export function MatchView() {
           onResult={(outcome, detail) => setResult({ outcome, detail })}
         />
 
-        {result && (
-          <div className="mt-6 bg-neutral-800/70 border border-amber-500/30 rounded-lg p-5 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-amber-400 font-display text-2xl font-bold capitalize">
-                {result.outcome === 'win'
-                  ? 'You won'
-                  : result.outcome === 'loss'
-                  ? 'You lost'
-                  : result.outcome === 'draw'
-                  ? 'Draw'
-                  : 'Match aborted'}
-              </p>
-              <p className="text-neutral-400 text-sm">{result.detail}</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setResult(null)
-                  setMatchKey((k) => k + 1)
-                }}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-semibold"
+        <AnimatePresence>
+          {result && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, y: 16, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 180, damping: 22 }}
+              className="mt-6 relative overflow-hidden rounded-xl border p-6 flex flex-col md:flex-row items-start md:items-center gap-5"
+              style={{
+                borderColor: `${opponent.accent}55`,
+                background: `radial-gradient(circle at 0% 0%, ${opponent.accent}22, transparent 60%), rgba(20,20,24,0.85)`,
+              }}
+            >
+              <motion.div
+                initial={{ scale: 0.5, rotate: -15 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 14 }}
               >
-                Rematch
-              </button>
-              <button
-                onClick={exitMatch}
-                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg"
-              >
-                Back to lounge
-              </button>
-            </div>
-          </div>
-        )}
+                <PersonaAvatar persona={opponent} size={88} />
+              </motion.div>
+              <div className="flex-1 min-w-0">
+                <motion.p
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className={`font-display text-3xl md:text-4xl font-bold ${verdictAccent}`}
+                >
+                  {verdict}
+                </motion.p>
+                <p className="text-neutral-400 text-sm mt-0.5">{result.detail}</p>
+                {reaction && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.45 }}
+                    className="mt-3 text-amber-100 text-lg italic leading-snug"
+                  >
+                    <span className="text-amber-400/70 text-xs uppercase tracking-widest not-italic mr-2">
+                      {opponent.label}
+                    </span>
+                    "{reaction}"
+                  </motion.p>
+                )}
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => {
+                    setResult(null)
+                    setMatchKey((k) => k + 1)
+                  }}
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-semibold shadow-lg shadow-amber-500/30"
+                >
+                  Rematch
+                </button>
+                <button
+                  onClick={exitMatch}
+                  className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg"
+                >
+                  Back to lounge
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   )
